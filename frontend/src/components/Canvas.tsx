@@ -7,7 +7,7 @@ export type CanvasProps = {
   lineWidth: number
   height: number
   width: number
-  drawCallback: (canvas: HTMLCanvasElement) => any
+  socketUrl: string
 };
 
 type CanvasState = {
@@ -17,6 +17,7 @@ type CanvasState = {
 export class Canvas extends React.Component<CanvasProps, CanvasState> {
   canvas: any;
   bounds: ClientRect;
+  connection: WebSocket;
 
   constructor(props: any) {
     super(props);
@@ -34,10 +35,31 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     context.strokeStyle = brushColor;
     context.lineJoin = context.lineCap = 'round';
     this.bounds = this.canvas.getBoundingClientRect();
+    this.setSocket(this.props.socketUrl);
+  }
+
+  setSocket(url: string) {
+    this.connection = new WebSocket(url);
+
+    this.connection.onopen = () => {
+      this.connection.send('open');
+    };
+
+    this.connection.onmessage = (evt: any) => {
+      var img = new Image();
+      var canvas = this.canvas;
+      img.onload = function() {
+        canvas.getContext('2d').drawImage(img, 0, 0);
+      };
+      img.src = evt.data;
+    };
   }
 
   componentWillUpdate(asd: any) {
-    this.props.drawCallback(this.canvas);
+    // TODO: The way this works now is retarded
+    // change so that it doesn't always send the entire image
+    // only the line drawn
+    this.connection.send(this.canvas.toDataURL());
   }
 
   mouseUp = () => {

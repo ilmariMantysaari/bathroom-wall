@@ -19,5 +19,6 @@
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",
     "typescript": "^2.7.2"
-  }
+  },
+  "proxy": "http://backend:3001"
 }

@@ -12,7 +12,6 @@ interface Config {
   }
 }
 
-
 function makeConfig(env: typeof process.env = process.env): Config {
 
   return {

@@ -1,30 +1,25 @@
 import * as React from 'react';
-import './App.css';
 import { Canvas, CanvasProps } from './components/Canvas';
 
 class App extends React.Component {
-  brushColor: '#000000';
+  brushColor: '#00FF00';
 
-  sync = (canvas: HTMLCanvasElement) => {
-    console.log('SYNCS');
-    console.log(canvas);
-  }
-  
   render() {
     const props: CanvasProps = {
       id: '',
       canvasColor: '#FFFFFF',
-      brushColor: this.brushColor,
+      brushColor: '#00FF00',
       lineWidth: 10,
       height: 500,
       width: 500,
-      drawCallback: this.sync,
+      // TODO: put this to configuration
+      socketUrl: 'ws://localhost:3001/socket'
     };
     return (
       <div>
-        <Canvas {...props}/>
+        <Canvas {...props} />
         Brush color:
-        <input 
+        <input
           type="text"
           value={this.brushColor}
         />

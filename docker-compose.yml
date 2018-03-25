@@ -36,6 +36,7 @@ services:
       - ./frontend/node_modules:/usr/src/app/node_modules
     environment:
       NODE_ENV: development
+      # TODO: socket url configuration
 
   postgres:
     image: postgres
