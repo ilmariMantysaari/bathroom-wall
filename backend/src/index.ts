@@ -21,10 +21,11 @@ function canvasSocket(ctx) {
     if(message == 'open'){
       activeConnections.push(ctx.websocket);
       ctx.websocket.send(canvas);
-    }
-    canvas = message;
-    for(let conn of activeConnections){
-      conn.send(canvas);
+    }else {
+      canvas = message;
+      for(let conn of activeConnections){
+        conn.send(canvas);
+      }
     }
   }).on('close', function() {
     console.log("connection closed")
