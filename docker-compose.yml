@@ -1,13 +1,9 @@
 version: '2'
 services:
 
-  backend:
+  backend_dev:
     build: ./backend
     command: node index.js
-    links:
-      - postgres
-    depends_on:
-      - postgres
     ports:
       - 3001:3001
     volumes:
@@ -16,36 +12,30 @@ services:
       server_port: 3001
       server_address: localhost
 
-      db_host: postgres
-      db_user: asd
-      db_pass: asd
-      db_name: asd
-
-  frontend:
+  frontend_dev:
     build:
       context: ./frontend
-      args:
-        ulimit: nofile=262144:262144
     command: yarn start
     ports:
       - 3000:3000
     links:
-      - backend
+      - backend_dev
     volumes:
       - ./frontend/src:/usr/src/app/src
-      - ./frontend/node_modules:/usr/src/app/node_modules
     environment:
       NODE_ENV: development
-      # TODO: socket url configuration
+      REACT_APP_SOCKET_URL: 'ws://localhost:3001/socket'
 
-  postgres:
-    image: postgres
-    volumes:
-      - postgres-data:/var/lib/postgresql
+  prod_build:
+    build: .
+    ports:
+      - 3000:3000
     environment:
-      POSTGRES_USER: asd
-      POSTGRES_PASSWORD: asd
-      POSTGRES_DB: asd
+      NODE_ENV: production
+      server_port: 3001
+      # server_address: vessanseina.mntsr.com
+      # REACT_APP_SOCKET_URL: ws://vessanseina.mntsr.com/socket
 
-volumes:
-  postgres-data: {}
+
+# volumes:
+#   postgres-data: {}

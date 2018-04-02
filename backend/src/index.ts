@@ -19,7 +19,6 @@ function canvasSocket(ctx) {
   ctx.websocket.on('message', function (message) {
     // FIXME: this is sort of hacky, figure the proper way to get the open event
     if(message == 'open'){
-      console.log("connection established")
       activeConnections.push(ctx.websocket);
       ctx.websocket.send(canvas);
     }

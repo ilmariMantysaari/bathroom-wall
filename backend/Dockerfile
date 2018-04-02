@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:7
 
 COPY package.json yarn.lock /usr/app/
 WORKDIR /usr/app
