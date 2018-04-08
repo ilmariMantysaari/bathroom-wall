@@ -3,11 +3,11 @@ import * as React from 'react';
 export type CanvasProps = {
   id: string
   canvasColor: string
-  brushColor: string
-  lineWidth: number
   height: number
   width: number
   socketUrl: string
+  brushColor: string
+  lineWidth: number
 };
 
 type CanvasState = {
@@ -19,23 +19,27 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
   bounds: ClientRect;
   connection: WebSocket;
 
-  constructor(props: any) {
+  constructor(props: CanvasProps) {
     super(props);
-
     this.state = {
       mouseDown: false
     };
   }
 
   componentDidMount() {
-    const { brushColor, lineWidth } = this.props;
+    const { lineWidth, brushColor, socketUrl } = this.props;
 
     let context: CanvasRenderingContext2D = this.canvas.getContext('2d');
     context.lineWidth = lineWidth;
     context.strokeStyle = brushColor;
     context.lineJoin = context.lineCap = 'round';
     this.bounds = this.canvas.getBoundingClientRect();
-    this.setSocket(this.props.socketUrl);
+    this.setSocket(socketUrl);
+  }
+
+  componentWillReceiveProps(props: any) {
+    let context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    context.strokeStyle = props.brushColor;
   }
 
   setSocket(url: string) {
@@ -72,7 +76,9 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     let x: number = e.pageX - this.bounds.left;
     let y: number = e.pageY - this.bounds.top;
 
-    this.canvas.getContext('2d').moveTo(x, y);
+    let context: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    context.beginPath();
+    context.moveTo(x, y);
   }
 
   mouseMove = (e: any) => {
