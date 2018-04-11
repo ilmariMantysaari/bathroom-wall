@@ -10,6 +10,7 @@ export type Next = () => Promise<void>;
 
 var canvas: string;
 var activeConnections: Array<any>;
+var connections: number;
 
 async function getCanvas(ctx: Koa.Context) {
   ctx.body = { message: 'MOROMORO' };
@@ -19,8 +20,11 @@ function canvasSocket(ctx) {
   ctx.websocket.on('message', function (message) {
     // FIXME: this is sort of hacky, figure the proper way to get the open event
     if(message == 'open'){
+      let index = connections++;
+      ctx.websocket.id = index;
       activeConnections.push(ctx.websocket);
       ctx.websocket.send(canvas);
+      console.log(ctx.websocket.id + " open");
     }else {
       canvas = message;
       for(let conn of activeConnections){
@@ -28,8 +32,8 @@ function canvasSocket(ctx) {
       }
     }
   }).on('close', function() {
-    console.log("connection closed")
-    activeConnections = activeConnections.filter((i) => {i == ctx.websocket});
+    activeConnections = activeConnections.filter(i => i.id != ctx.websocket.id);
+    console.log(ctx.websocket.id + " closed");
   })
 }
 
@@ -45,6 +49,7 @@ function makeApp(): Koa {
   app.use(http.routes());
   app.ws.use(ws.routes());
 
+  connections = 0;
   activeConnections = new Array<any>();
   return app;
 }
